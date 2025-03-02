@@ -1,0 +1,357 @@
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.title {
+  font-size: 3.5rem;
+  text-align: center;
+  margin-bottom: 2rem;
+  background: linear-gradient(to right, #2d3436, #636e72);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  position: relative;
+}
+
+.highlight {
+  background: linear-gradient(120deg, #00b894, #00cec9);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.card {
+  background: white;
+  border-radius: 20px;
+  padding: 2rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+}
+
+.mainInputs {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+  margin-bottom: 3rem;
+}
+
+.inputGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  position: relative;
+  margin-bottom: 1rem;
+}
+
+.inputGroup label {
+  font-size: 0.9rem;
+  color: #636e72;
+  font-weight: 500;
+}
+
+.inputGroup input {
+  padding: 0.8rem;
+  border: 2px solid #dfe6e9;
+  border-radius: 10px;
+  font-size: 1rem;
+  transition: all 0.2s ease;
+}
+
+.inputGroup input:focus {
+  outline: none;
+  border-color: #00b894;
+  box-shadow: 0 0 0 3px rgba(0, 184, 148, 0.1);
+}
+
+.inputGroup input.invalid {
+  border-color: #dc3545;
+  box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1);
+}
+
+.expensesSection {
+  border-top: 2px solid #f1f2f6;
+  padding-top: 2rem;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.expensesSection h2 {
+  margin-bottom: 1.5rem;
+  color: #2d3436;
+  font-size: 1.5rem;
+}
+
+.expensesGrid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 1rem;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.inputWithUnit {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.inputWithUnit input {
+  width: 100%;
+  padding-right: 2rem;
+}
+
+.inputWithUnit span {
+  position: absolute;
+  right: 0.8rem;
+  color: #636e72;
+  font-size: 0.9rem;
+  pointer-events: none;
+}
+
+.conditionsSection {
+  border-top: 2px solid #f1f2f6;
+  padding-top: 2rem;
+  margin-top: 2rem;
+}
+
+.conditionsSection h2 {
+  margin-bottom: 1.5rem;
+  color: #2d3436;
+  font-size: 1.8rem;
+  font-weight: 600;
+  text-align: center;
+  background: linear-gradient(to right, #2d3436, #636e72);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  position: relative;
+  padding-bottom: 1rem;
+}
+
+.conditionsSection h2::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 3px;
+  background: linear-gradient(to right, #00b894, #00cec9);
+  border-radius: 3px;
+}
+
+.conditionsContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.conditionCard {
+  background: white;
+  border-radius: 20px;
+  padding: 2rem;
+  border: none;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.conditionCard::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(to right, #00b894, #00cec9);
+  border-radius: 4px 4px 0 0;
+}
+
+.conditionCard:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+}
+
+.conditionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #f1f2f6;
+}
+
+.conditionName {
+  font-size: 1.3rem;
+  font-weight: 600;
+  border: none;
+  background: transparent;
+  padding: 0.5rem;
+  border-radius: 5px;
+  color: #2d3436;
+  width: 100%;
+}
+
+.conditionName:focus {
+  outline: none;
+  background: #f8f9fa;
+  box-shadow: none;
+}
+
+.removeButton {
+  background: none;
+  border: none;
+  color: #636e72;
+  font-size: 1.8rem;
+  cursor: pointer;
+  padding: 0.5rem;
+  line-height: 1;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+  margin-left: 1rem;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.removeButton:hover {
+  background: #ff7675;
+  color: white;
+  transform: rotate(90deg);
+}
+
+.conditionInputs {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  background: #f8f9fa;
+  padding: 1.5rem;
+  border-radius: 15px;
+}
+
+.addButton {
+  background: #00b894;
+  color: white;
+  border: none;
+  padding: 1rem 2rem;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  width: fit-content;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.addButton:hover {
+  background: #00a187;
+  transform: translateY(-2px);
+}
+
+.simulateButton {
+  margin-top: 1rem;
+  padding: 0.75rem 1.5rem;
+  background: linear-gradient(120deg, #00b894, #00cec9);
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s;
+  width: 100%;
+}
+
+.simulateButton:hover {
+  opacity: 0.9;
+}
+
+.simulateButton:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+.warning {
+  color: #dc3545;
+  font-size: 0.8rem;
+  margin-top: 0.25rem;
+  display: block;
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 1rem;
+  }
+
+  .title {
+    font-size: 2.5rem;
+  }
+
+  .card {
+    padding: 1.5rem;
+  }
+
+  .expensesGrid {
+    grid-template-columns: repeat(5, minmax(100px, 1fr));
+    gap: 0.5rem;
+    overflow-x: auto;
+    padding-bottom: 0.5rem;
+  }
+
+  .conditionInputs {
+    grid-template-columns: 1fr;
+    padding: 1rem;
+  }
+
+  .conditionCard {
+    padding: 1.5rem;
+  }
+
+  .conditionName {
+    font-size: 1.1rem;
+  }
+}
+
+.resultsCard {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  margin-top: 2rem;
+  padding: 1.5rem;
+  width: 100%;
+}
+
+.visualizerContainer {
+  width: 100%;
+}
+
+.fieldSelector {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.fieldSelector label {
+  margin-right: 1rem;
+  font-weight: 500;
+}
+
+.selectField {
+  padding: 0.5rem;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  background-color: white;
+  min-width: 200px;
+} 
