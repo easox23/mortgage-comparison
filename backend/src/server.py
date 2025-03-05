@@ -3,7 +3,13 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 from main import MortgageCondition, MortgageSimulation, summarize_mortgage_payments, MortgageStats, SummarizedMortgagePayment
 import uvicorn
+import logging
+
+
 app = FastAPI()
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 
 app.add_middleware(
@@ -31,7 +37,7 @@ class SimulationOutput(BaseModel):
 
 @app.post("/api/simulate")
 async def simulate(simulation_input: SimulationInput) -> SimulationOutput:
-    print(simulation_input)
+    logger.info(f"Received simulation request with input: {simulation_input}")
     average_results = {}
     average_mortgage_payments = {}
     
