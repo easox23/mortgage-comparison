@@ -270,9 +270,9 @@ class MortgageSimulation:
 
 
         return MortgageStats(
-            average_euribor=round(sum_euribor / total_payments, 5),
-            average_interest_rate=round(sum_interest_rate / total_payments, 5),
-            equivalent_fixed_interest_rate=round(equivalent_fixed_interest_rate, 5),
+            average_euribor=round(sum_euribor / total_payments, 5)*100,
+            average_interest_rate=round(sum_interest_rate / total_payments, 5)*100,
+            equivalent_fixed_interest_rate=round(equivalent_fixed_interest_rate, 5)*100,
             total_interest_paid=round(sum_interest_paid, 2),
             total_capital_paid=round(sum_capital_paid, 2),
             total_expenses=round(sum_expenses, 2),
