@@ -1,10 +1,8 @@
 'use client'
-
 import { useState } from 'react'
 import styles from './page.module.css'
-import EuroInput from '../components/EuroInput';
-import PercentageInput from '../components/PercentageInput';
 import { AverageResultsVisualizer } from '../components/AverageResultsVisualizer';
+import CurrencyInput from 'react-currency-input-field';
 interface Condition {
   name: string;
   rate: number;
@@ -34,9 +32,13 @@ interface SimulationResults {
   average_results: {
     [conditionName: string]: SimulationResultEntry[];
   };
-  // Add other result properties here as needed
 }
 
+interface NumberFormatChangeEvent extends React.ChangeEvent<HTMLInputElement> {
+  detail: {
+    numberValue: number;
+  };
+}
 
 
 export default function MortgageSimulator() {
@@ -51,22 +53,19 @@ export default function MortgageSimulator() {
     yearlyExpenses: 0
   })
 
-  const [inputWarnings, setInputWarnings] = useState<{[key: string]: string}>({})
+  const [inputWarnings, setInputWarnings] = useState<{ [key: string]: string }>({})
 
-  const handleConditionChange = (index: number, field: keyof Condition, value: string) => {
-    const numValue = Number(value)
+  const [showDescriptions, setShowDescriptions] = useState(false)
 
-    if (isNaN(numValue) && field !== 'name') {
-      setInputWarnings(prev => ({ ...prev, [`condition-${index}-${field}`]: 'Invalid number' }))
-    } else {
-      setConditions(prev => {
-        const newConditions = [...prev]
-        newConditions[index] = { ...newConditions[index], [field]: field === 'name' ? value : numValue }
-        return newConditions
-      })
-      setInputWarnings(prev => ({ ...prev, [`condition-${index}-${field}`]: '' }))
-    }
+  const handleConditionChange = (index: number, field: keyof Condition, value: any) => {
+    
+    setConditions(prev => {
+      const newConditions = [...prev]
+      newConditions[index] = { ...newConditions[index], [field]: value }
+      return newConditions
+    })
   }
+  
 
   const addNewCondition = () => {
     setConditions(prev => [...prev, {
@@ -104,8 +103,6 @@ export default function MortgageSimulator() {
 
       const result = await response.json()
       setSimulationResults(result)
-      console.log('Average Results:', result.average_results)
-      console.log('Average Mortgage Payments:', result.average_mortgage_payments)
     } catch (error) {
       console.error('Error simulating mortgage:', error)
     } finally {
@@ -122,41 +119,123 @@ export default function MortgageSimulator() {
 
       <div className={styles.card}>
         <div className={styles.mainInputs}>
+
           <div className={styles.inputGroup}>
-            <label htmlFor="principal">Principal Amount</label>
-            <EuroInput
-              initialValue={generalInput.principal}
-              onChange={(value) => setFormData(prev => ({ ...prev, principal: value }))}
+            <label htmlFor="principal">Principal Amount (€)</label>
+            <CurrencyInput
+              id="principal"
+              name="principal"
+              placeholder="Enter amount"
+              className={styles.input}
+              intlConfig={{ locale: "de-DE", currency: "EUR" }}
+              decimalsLimit={2}
+              onValueChange={(value) => {
+                setFormData(prev => ({
+                  ...prev,
+                  principal: value ? parseFloat(value) : 0
+                }));
+              }}
             />
+            <p className={styles.inputDescription}>The total amount of money you're borrowing for your mortgage.</p>
+          </div>
+          <div className={styles.inputGroup}>
+            <label htmlFor="yearlyExpenses">Yearly House Expenses (€)</label>
+            <CurrencyInput
+              id="yearlyExpenses"
+              name="yearlyExpenses"
+              placeholder="Enter amount"
+              className={styles.input}
+              intlConfig={{ locale: "de-DE", currency: "EUR" }}
+              decimalsLimit={2}
+              onValueChange={(value) => {
+                setFormData(prev => ({
+                  ...prev,
+                  yearlyExpenses: value ? parseFloat(value) : 0
+                }));
+              }}
+            />
+            <p className={styles.inputDescription}>Annual costs for property maintenance, taxes, and insurance.</p>
+          </div>
+          <div className={styles.inputGroup}>
+            <label htmlFor="currentEuribor">Current Euribor (%)</label>
+            <input
+              type="number"
+              id="currentEuribor"
+              value={generalInput.currentEuribor * 100}
+              onChange={(e) => setFormData(prev => ({
+                ...prev,
+                currentEuribor: parseFloat(e.target.value) / 100
+              }))}
+              step="0.1"
+              min="0"
+              max="100"
+              className={styles.input}
+            />
+            <p className={styles.inputDescription}>The current European interbank lending rate.</p>
           </div>
 
           <div className={styles.inputGroup}>
-            <label htmlFor="currentEuribor">Current Euribor</label>
-            <PercentageInput
-              initialValue={generalInput.currentEuribor * 100}
-              onChange={(value) => setFormData(prev => ({ ...prev, currentEuribor: value / 100 }))}
+            <label htmlFor="yearlyVariance">Yearly Variance (%)</label>
+            <input
+              type="number"
+              id="yearlyVariance"
+              value={generalInput.yearlyVariance * 100}
+              onChange={(e) => setFormData(prev => ({
+                ...prev,
+                yearlyVariance: parseFloat(e.target.value) / 100
+              }))}
+              step="0.1"
+              min="0"
+              max="100"
+              className={styles.input}
             />
-          </div>
-
-          <div className={styles.inputGroup}>
-            <label htmlFor="yearlyVariance">Yearly Variance</label>
-            <PercentageInput
-              initialValue={generalInput.yearlyVariance * 100}
-              onChange={(value) => setFormData(prev => ({ ...prev, yearlyVariance: value / 100 }))}
-            />
-          </div>
-
-          <div className={styles.inputGroup}>
-            <label htmlFor="yearlyExpenses">Yearly House Expenses</label>
-            <EuroInput
-              initialValue={generalInput.yearlyExpenses}
-              onChange={(value) => setFormData(prev => ({ ...prev, yearlyExpenses: value }))}
-            />
+            <p className={styles.inputDescription}>Expected annual change in Euribor rate for simulation purposes.</p>
           </div>
         </div>
 
         <div className={styles.conditionsSection}>
           <h2>Mortgage Conditions</h2>
+          
+          <div className={styles.fieldDescriptions}>
+            <button 
+              className={styles.fieldDescriptionsToggle}
+              onClick={() => setShowDescriptions(!showDescriptions)}
+            >
+              {showDescriptions ? 'Hide Field Descriptions' : 'Show Field Descriptions'} <span>{showDescriptions ? '▲' : '▼'}</span>
+            </button>
+            
+            {showDescriptions && (
+              <div className={styles.descriptionsContent}>
+                <div className={styles.descriptionsGrid}>
+                  <div className={styles.fieldDescription}>
+                    <span className={styles.fieldName}>Fixed Rate (%)</span>
+                    <p>The interest rate fixed for the initial period of your mortgage.</p>
+                  </div>
+                  <div className={styles.fieldDescription}>
+                    <span className={styles.fieldName}>Euribor Delta (%)</span>
+                    <p>The percentage added to Euribor after the fixed rate period ends.</p>
+                  </div>
+                  <div className={styles.fieldDescription}>
+                    <span className={styles.fieldName}>Fixed Period</span>
+                    <p>Number of years the interest rate remains fixed.</p>
+                  </div>
+                  <div className={styles.fieldDescription}>
+                    <span className={styles.fieldName}>Total Years</span>
+                    <p>The total duration of the mortgage in years.</p>
+                  </div>
+                  <div className={styles.fieldDescription}>
+                    <span className={styles.fieldName}>Fixed Period Bonification</span>
+                    <p>Yearly payments made during the fixed rate period to lower the interest rate.</p>
+                  </div>
+                  <div className={styles.fieldDescription}>
+                    <span className={styles.fieldName}>After Fixed Period Bonification</span>
+                    <p>Yearly payments made after the fixed rate period ends to lower the interest rate.</p>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+          
           <div className={styles.conditionsContainer}>
             {conditions.map((condition, index) => (
               <div key={index} className={styles.conditionCard}>
@@ -167,20 +246,40 @@ export default function MortgageSimulator() {
                     onChange={(e) => handleConditionChange(index, 'name', e.target.value)}
                     className={styles.conditionName}
                   />
-                  <button 
+                  <button
                     onClick={() => removeCondition(index)}
                     className={styles.removeButton}
                   >
                     ×
                   </button>
                 </div>
-                
+
                 <div className={styles.conditionInputs}>
                   <div className={styles.inputGroup}>
-                    <label>Fixed Rate</label>
-                    <PercentageInput
-                      initialValue={condition.rate * 100}
-                      onChange={(value) => handleConditionChange(index, 'rate', (value / 100).toString())}
+                    <label>Fixed Rate (%)</label>
+                    <input
+                      type="number"
+                      id="rate"
+                      value={condition.rate*100}
+                      onChange={(e) => handleConditionChange(index, 'rate', parseFloat(e.target.value)/100)}
+                      step="0.1"
+                      min="0"
+                      max="100"
+                      className={styles.input}
+                    />
+                  </div>
+
+                  <div className={styles.inputGroup}>
+                    <label>Euribor Delta (%)</label>
+                    <input
+                      type="number"
+                      id="euriborDelta"
+                      value={condition.euriborDelta*100}
+                      onChange={(e) => handleConditionChange(index, 'euriborDelta', parseFloat(e.target.value)/100)}
+                      step="0.1"
+                      min="0"
+                      max="100"
+                      className={styles.input}
                     />
                   </div>
 
@@ -188,54 +287,64 @@ export default function MortgageSimulator() {
                     <label>Fixed Period</label>
                     <input
                       type="number"
+                      id="fixedPeriod"
                       value={condition.fixedPeriod}
-                      onChange={(e) => handleConditionChange(index, 'fixedPeriod', e.target.value)}
+                      onChange={(e) => handleConditionChange(index, 'fixedPeriod', parseFloat(e.target.value))}
+                      step="1"
+                      min="0"
+                      className={styles.input}
                     />
                   </div>
-
-                  <div className={styles.inputGroup}>
-                    <label>Euribor Delta</label>
-                    <PercentageInput
-                      initialValue={condition.euriborDelta * 100}
-                      onChange={(value) => handleConditionChange(index, 'euriborDelta', (value / 100).toString())}
-                    />
-                  </div>
-
+                
                   <div className={styles.inputGroup}>
                     <label>Total Years</label>
                     <input
                       type="number"
+                      id="totalYears"
                       value={condition.totalYears}
-                      onChange={(e) => handleConditionChange(index, 'totalYears', e.target.value)}
+                      onChange={(e) => handleConditionChange(index, 'totalYears', parseFloat(e.target.value))}
+                      step="1"
+                      min="0"
+                      className={styles.input}
                     />
                   </div>
 
                   <div className={styles.inputGroup}>
                     <label>Fixed Period Bonification</label>
-                    <EuroInput
-                      initialValue={condition.fixedPeriodBonification}
-                      onChange={(value) => handleConditionChange(index, 'fixedPeriodBonification', value.toString())}
+                    <CurrencyInput
+                      id="fixedPeriodBonification"
+                      name="fixedPeriodBonification"
+                      placeholder="Enter amount"
+                      className={styles.input}
+                      intlConfig={{ locale: "de-DE", currency: "EUR" }}
+                      decimalsLimit={2}
+                      onValueChange={(value) => handleConditionChange(index, 'fixedPeriodBonification', value ? parseFloat(value) : 0)}
                     />
                   </div>
 
                   <div className={styles.inputGroup}>
                     <label>After Fixed Period Bonification</label>
-                    <EuroInput
-                      initialValue={condition.afterFixedPeriodBonification}
-                      onChange={(value) => handleConditionChange(index, 'afterFixedPeriodBonification', value.toString())}
+                    <CurrencyInput
+                      id="afterFixedPeriodBonification"
+                      name="afterFixedPeriodBonification"
+                      placeholder="Enter amount"
+                      className={styles.input}
+                      intlConfig={{ locale: "de-DE", currency: "EUR" }}
+                      decimalsLimit={2}
+                      onValueChange={(value) => handleConditionChange(index, 'afterFixedPeriodBonification', value ? parseFloat(value) : 0)}
                     />
                   </div>
                 </div>
               </div>
             ))}
           </div>
-          
+
           <button onClick={addNewCondition} className={styles.addButton}>
             + Add New Mortgage
           </button>
 
-          <button 
-            onClick={handleSimulate} 
+          <button
+            onClick={handleSimulate}
             className={styles.simulateButton}
             disabled={isSimulating || conditions.length === 0}
           >

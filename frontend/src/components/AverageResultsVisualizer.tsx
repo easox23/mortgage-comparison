@@ -1,4 +1,5 @@
-import Plot from "react-plotly.js";
+import dynamic from "next/dynamic";
+const Plot = dynamic(() => import("react-plotly.js"), { ssr: false, })
 import { useState } from "react";
 import { BoxPlotData } from 'plotly.js';
 import styles from '../app/page.module.css';
@@ -26,11 +27,11 @@ interface SimulationResultEntry {
 
 
 export const AverageResultsVisualizer = ({ average_results }: AverageResultsVisualizerProps) => {
-    const [selectedField, setSelectedField] = useState<keyof SimulationResultEntry>('average_interest_rate');
+    const [selectedField, setSelectedField] = useState<keyof SimulationResultEntry>('equivalent_fixed_interest_rate');
     
     const fieldOptions: (keyof SimulationResultEntry)[] = [
       //'average_euribor', 
-      'average_interest_rate', 
+      //'average_interest_rate', 
       'average_monthly_payment', //lets you calculate how much you pay per month
       'equivalent_fixed_interest_rate', //lets you compare the interest rate as if it had been at a fixed rate
       'total_bonification_payments',
@@ -47,9 +48,10 @@ export const AverageResultsVisualizer = ({ average_results }: AverageResultsVisu
         y: entries.map(entry => entry[selectedField]),
         name: condition,
         type: 'box' as const,
-        boxpoints: 'all',
-        jitter: 0.3,
-        pointpos: -1.8
+        //boxpoints: 'Outliers',
+        //boxpoints: 'all',
+        //jitter: 0.3,
+        //pointpos: -1.8
       }));
     };
   
@@ -66,7 +68,10 @@ export const AverageResultsVisualizer = ({ average_results }: AverageResultsVisu
           >
             {fieldOptions.map(option => (
               <option key={option} value={option}>
-                {option.replace(/_/g, ' ').toUpperCase()}
+                {option.replace(/_/g, ' ')
+                  .split(' ')
+                  .map((word, index) => index === 0 ? word.charAt(0).toUpperCase() + word.slice(1) : word.toLowerCase())
+                  .join(' ')}
               </option>
             ))}
           </select>

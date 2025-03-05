@@ -1,5 +1,4 @@
 .container {
-  max-width: 1200px;
   margin: 0 auto;
   padding: 2rem;
 }
@@ -354,4 +353,68 @@
   border: 1px solid #ccc;
   background-color: white;
   min-width: 200px;
+}
+
+.inputDescription {
+  font-size: 0.8rem;
+  color: #666;
+  margin-top: 4px;
+  margin-bottom: 0;
+}
+
+.fieldDescriptions {
+  margin-bottom: 2rem;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.fieldDescriptionsToggle {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  background: #f1f5f9;
+  border: none;
+  text-align: left;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.fieldDescriptionsToggle:hover {
+  background: #e2e8f0;
+}
+
+.descriptionsContent {
+  padding: 1.5rem;
+  background: white;
+}
+
+.descriptionsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+.fieldDescription {
+  padding: 0.75rem;
+  border-left: 3px solid #00b894;
+  background: #f8f9fa;
+  border-radius: 0 8px 8px 0;
+}
+
+.fieldName {
+  font-weight: 600;
+  color: #2d3436;
+  display: block;
+  margin-bottom: 0.25rem;
+}
+
+.fieldDescription p {
+  margin: 0;
+  color: #636e72;
+  font-size: 0.9rem;
+  line-height: 1.4;
 } 
