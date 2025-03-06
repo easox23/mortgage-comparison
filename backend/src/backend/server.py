@@ -4,7 +4,7 @@ from pydantic import BaseModel, Field
 from main import MortgageCondition, MortgageSimulation, summarize_mortgage_payments, MortgageStats, SummarizedMortgagePayment
 import uvicorn
 import logging
-
+from mangum import Mangum
 
 app = FastAPI()
 
@@ -34,6 +34,11 @@ class SimulationInput(BaseModel):
 class SimulationOutput(BaseModel):
     average_results: dict[str, list[MortgageStats]]
     average_mortgage_payments: dict[str, list[SummarizedMortgagePayment]]
+
+#default route
+@app.get("/")
+async def root():
+    return {"message": "Hello World"}
 
 @app.post("/api/simulate")
 async def simulate(simulation_input: SimulationInput) -> SimulationOutput:
@@ -69,8 +74,10 @@ async def simulate(simulation_input: SimulationInput) -> SimulationOutput:
     }
     
 
+handler = Mangum(app, lifespan="off")
 
 if __name__ == "__main__":
     uvicorn.run("server:app", host="0.0.0.0", port=8000, reload=True)
-    
+        
+
 
