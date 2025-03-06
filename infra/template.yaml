@@ -1,0 +1,145 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: 'Mortgage Simulator - Infrastructure with CloudFront OAC'
+
+Parameters:
+  StageName:
+    Type: String
+    Default: v1
+    Description: API Gateway stage name
+
+Resources:
+  # Lambda Function
+  MortgageSimulatorFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../backend/artifacts/function.zip
+      Handler: backend/server.handler
+      Runtime: python3.12
+      Timeout: 30
+      MemorySize: 128
+      Layers:
+        - !Ref MortgageSimulatorLayer
+      Environment:
+        Variables:
+          STAGE: !Ref StageName
+      Events:
+        AllApiEvents:
+          Type: Api
+          Properties:
+            Path: /{proxy+}
+            Method: ANY
+            RestApiId: !Ref MortgageSimulatorApi
+
+  # CloudWatch Logs for Lambda Function
+  MortgageSimulatorLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub "/aws/lambda/${MortgageSimulatorFunction}"
+      RetentionInDays: 7
+
+  # Lambda Layer
+  MortgageSimulatorLayer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      ContentUri: ../backend/artifacts/layer.zip
+      CompatibleRuntimes:
+        - python3.12
+      LayerName: mortgage-simulator-dependencies
+
+  # API Gateway
+  MortgageSimulatorApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: !Ref StageName
+      Cors:
+        AllowMethods: "'GET,POST,OPTIONS'"
+        AllowHeaders: "'Content-Type,Authorization'"
+        AllowOrigin: "'*'"
+      EndpointConfiguration: REGIONAL
+
+  # # S3 Bucket (Private)
+  # WebsiteBucket:
+  #   Type: AWS::S3::Bucket
+  #   Properties:
+  #     PublicAccessBlockConfiguration:
+  #       BlockPublicAcls: true
+  #       BlockPublicPolicy: true
+  #       IgnorePublicAcls: true
+  #       RestrictPublicBuckets: true
+  #     OwnershipControls:
+  #       Rules:
+  #         - ObjectOwnership: BucketOwnerEnforced
+
+  # # CloudFront Origin Access Control (OAC)
+  # CloudFrontOAC:
+  #   Type: AWS::CloudFront::OriginAccessControl
+  #   Properties:
+  #     OriginAccessControlConfig:
+  #       Name: MortgageSimulatorOAC
+  #       Description: OAC for S3 origin
+  #       SigningProtocol: sigv4
+  #       SigningBehavior: always
+  #       OriginAccessControlOriginType: s3
+
+  # # CloudFront Distribution
+  # CloudFrontDistribution:
+  #   Type: AWS::CloudFront::Distribution
+  #   Properties:
+  #     DistributionConfig:
+  #       Enabled: true
+  #       DefaultRootObject: index.html
+  #       Origins:
+  #         - Id: S3Origin
+  #           DomainName: !Sub "${WebsiteBucket}.s3.${AWS::Region}.amazonaws.com"
+  #           S3OriginConfig:
+  #             OriginAccessIdentity: ""
+  #           OriginAccessControlId: !Ref CloudFrontOAC
+  #       DefaultCacheBehavior:
+  #         TargetOriginId: S3Origin
+  #         ViewerProtocolPolicy: redirect-to-https
+  #         AllowedMethods:
+  #           - GET
+  #           - HEAD
+  #           - OPTIONS
+  #         CachedMethods:
+  #           - GET
+  #           - HEAD
+  #           - OPTIONS
+  #         ForwardedValues:
+  #           QueryString: false
+  #           Cookies:
+  #             Forward: none
+  #       ViewerCertificate:
+  #         CloudFrontDefaultCertificate: true
+
+  # # S3 Bucket Policy for CloudFront OAC
+  # WebsiteBucketPolicy:
+  #   Type: AWS::S3::BucketPolicy
+  #   DependsOn: CloudFrontDistribution
+  #   Properties:
+  #     Bucket: !Ref WebsiteBucket
+  #     PolicyDocument:
+  #       Version: '2012-10-17'
+  #       Statement:
+  #         - Effect: Allow
+  #           Principal:
+  #             Service: cloudfront.amazonaws.com
+  #           Action: s3:GetObject
+  #           Resource: !Sub "${WebsiteBucket.Arn}/*"
+  #           Condition:
+  #             StringEquals:
+  #               AWS:SourceArn: !Sub "arn:aws:cloudfront::${AWS::AccountId}:distribution/${CloudFrontDistribution}"
+
+Outputs:
+  ApiEndpoint:
+    Description: "API Gateway endpoint URL"
+    Value: !Sub "https://${MortgageSimulatorApi}.execute-api.${AWS::Region}.amazonaws.com/${StageName}/"
+  
+  # CloudFrontDomain:
+  #   Description: "CloudFront distribution domain name"
+  #   Value: !GetAtt CloudFrontDistribution.DomainName
+  
+  # S3BucketName:
+  #   Description: "Name of the S3 bucket"
+  #   Value: !Ref WebsiteBucket

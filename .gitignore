@@ -100,3 +100,12 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+
+# backend
+backend/artifacts/
+backend/python/
+backend/package.zip
+
+# aws
+.aws-sam/
