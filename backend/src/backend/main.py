@@ -1,6 +1,5 @@
 from pydantic import BaseModel
 import numpy as np
-import matplotlib.pyplot as plt
 import numpy_financial as npf
 import pandas as pd
 
@@ -289,98 +288,98 @@ class MortgageSimulation:
             self.simulate_yearly_mortgage_payment()
         return self.calculate_mortgage_stats()
 
-def show_simulation(mortgage_payments):
-    years = [payment.year for payment in mortgage_payments]
-    euribor = [payment.euribor for payment in mortgage_payments]
-    interest_rates = [payment.interest_rate for payment in mortgage_payments]
-    principals = [payment.principal for payment in mortgage_payments]
-    interest_paid = [payment.interest_paid for payment in mortgage_payments]
-    capital_paid = [payment.capital_paid for payment in mortgage_payments]
-    bonification_payments = [payment.bonfication_payments for payment in mortgage_payments]
-    real_interest_rates = [payment.real_interest_rate for payment in mortgage_payments]
+# def show_simulation(mortgage_payments):
+#     years = [payment.year for payment in mortgage_payments]
+#     euribor = [payment.euribor for payment in mortgage_payments]
+#     interest_rates = [payment.interest_rate for payment in mortgage_payments]
+#     principals = [payment.principal for payment in mortgage_payments]
+#     interest_paid = [payment.interest_paid for payment in mortgage_payments]
+#     capital_paid = [payment.capital_paid for payment in mortgage_payments]
+#     bonification_payments = [payment.bonfication_payments for payment in mortgage_payments]
+#     real_interest_rates = [payment.real_interest_rate for payment in mortgage_payments]
 
-    # Create the plot
-    fig, (ax1, ax2,ax3) = plt.subplots(3, 1, figsize=(12, 12))
-
-
-    # First subplot: Rates and Principal
-    ax1.plot(years, euribor, label='Euribor', marker='o')
-    ax1.plot(years, interest_rates, label='Interest Rate', marker='s')
-    ax1.plot(years, real_interest_rates, label='Real Interest Rate', marker='s')
-
-    ax1.set_title('Rates and Principal Over Time')
-    ax1.set_xlabel('Year')
-    ax1.set_ylabel('Rate')
-    ax1.legend()
-    ax1.grid(True)
+#     # Create the plot
+#     fig, (ax1, ax2,ax3) = plt.subplots(3, 1, figsize=(12, 12))
 
 
+#     # First subplot: Rates and Principal
+#     ax1.plot(years, euribor, label='Euribor', marker='o')
+#     ax1.plot(years, interest_rates, label='Interest Rate', marker='s')
+#     ax1.plot(years, real_interest_rates, label='Real Interest Rate', marker='s')
 
-    # Second subplot: Payments
-    ax2.plot(years, interest_paid, label='Interest Paid', marker='v')
-    ax2.plot(years, capital_paid, label='Capital Paid', marker='D')
-    ax2.plot(years, bonification_payments, label='Bonification Payments', marker='*')
-    ax2.set_title('Payment Components Over Time')
-    ax2.set_xlabel('Year')
-    ax2.set_ylabel('Amount')
-    ax2.legend()
-    ax2.grid(True)
-
-    ax3.plot(years, principals, label='Principal', marker='^')
-    ax3.set_title('Remaining Principal')
-    ax3.set_xlabel('Year')
-    ax3.set_ylabel('Amount')
-    ax3.legend()
-    ax3.grid(True)
-    # Adjust layout to prevent overlap
-    plt.tight_layout()
-
-    # Show the plot
-    plt.show()
-
-def show_comparison(total_payed_list,avg_monthly_payments,labels):
-    # Create box plot
-    plt.boxplot(total_payed_list, tick_labels=labels)
+#     ax1.set_title('Rates and Principal Over Time')
+#     ax1.set_xlabel('Year')
+#     ax1.set_ylabel('Rate')
+#     ax1.legend()
+#     ax1.grid(True)
 
 
-    # Customize the plot
-    plt.title('Total Mortgage Payment Distribution by Mortgage type')
-    plt.ylabel('Total Amount Paid')
-    plt.xlabel('Mortgage type')
 
-    # Rotate x-axis labels if needed
-    plt.xticks(rotation=45)
+#     # Second subplot: Payments
+#     ax2.plot(years, interest_paid, label='Interest Paid', marker='v')
+#     ax2.plot(years, capital_paid, label='Capital Paid', marker='D')
+#     ax2.plot(years, bonification_payments, label='Bonification Payments', marker='*')
+#     ax2.set_title('Payment Components Over Time')
+#     ax2.set_xlabel('Year')
+#     ax2.set_ylabel('Amount')
+#     ax2.legend()
+#     ax2.grid(True)
 
-    # Add grid for better readability
-    plt.grid(True, linestyle='--', alpha=0.7)
+#     ax3.plot(years, principals, label='Principal', marker='^')
+#     ax3.set_title('Remaining Principal')
+#     ax3.set_xlabel('Year')
+#     ax3.set_ylabel('Amount')
+#     ax3.legend()
+#     ax3.grid(True)
+#     # Adjust layout to prevent overlap
+#     plt.tight_layout()
 
-    # Adjust layout to prevent label cutoff
-    plt.tight_layout()
+#     # Show the plot
+#     plt.show()
 
-    # Show the plot
-    plt.show()
+# def show_comparison(total_payed_list,avg_monthly_payments,labels):
+#     # Create box plot
+#     plt.boxplot(total_payed_list, tick_labels=labels)
+
+
+#     # Customize the plot
+#     plt.title('Total Mortgage Payment Distribution by Mortgage type')
+#     plt.ylabel('Total Amount Paid')
+#     plt.xlabel('Mortgage type')
+
+#     # Rotate x-axis labels if needed
+#     plt.xticks(rotation=45)
+
+#     # Add grid for better readability
+#     plt.grid(True, linestyle='--', alpha=0.7)
+
+#     # Adjust layout to prevent label cutoff
+#     plt.tight_layout()
+
+#     # Show the plot
+#     plt.show()
     
 
-    # Create box plot
-    plt.boxplot(avg_monthly_payments, tick_labels=labels)
+#     # Create box plot
+#     plt.boxplot(avg_monthly_payments, tick_labels=labels)
 
 
-    # Customize the plot
-    plt.title('Average monthly payment by mortgage type')
-    plt.ylabel('Monthly payment')
-    plt.xlabel('Mortgage type')
+#     # Customize the plot
+#     plt.title('Average monthly payment by mortgage type')
+#     plt.ylabel('Monthly payment')
+#     plt.xlabel('Mortgage type')
 
-    # Rotate x-axis labels if needed
-    plt.xticks(rotation=45)
+#     # Rotate x-axis labels if needed
+#     plt.xticks(rotation=45)
 
-    # Add grid for better readability
-    plt.grid(True, linestyle='--', alpha=0.7)
+#     # Add grid for better readability
+#     plt.grid(True, linestyle='--', alpha=0.7)
 
-    # Adjust layout to prevent label cutoff
-    plt.tight_layout()
+#     # Adjust layout to prevent label cutoff
+#     plt.tight_layout()
 
-    # Show the plot
-    plt.show()
+#     # Show the plot
+#     plt.show()
 
 def create_percentiles(data_series,round_to=5):
             return AverageWithPercentiles(
@@ -440,7 +439,7 @@ def main():
         for x in range(100):
             simulation = MortgageSimulation(principal, yearly_house_expenses, conditions[i], i, current_euribor,euribor_variance_yearly)
             results = simulation.simulate()
-            show_simulation(simulation.mortgage_payments)
+            #show_simulation(simulation.mortgage_payments)
             total_payment = results['total_paid']
             total_payed.append(total_payment)
             avg_monthly_payment.append(total_payment/results['total_years']/12)
@@ -451,7 +450,7 @@ def main():
         labels.append(i)
         
     # Create box plot
-    show_comparison(total_payed_list,avg_monthly_payments, labels)
+    #show_comparison(total_payed_list,avg_monthly_payments, labels)
 
 
 
