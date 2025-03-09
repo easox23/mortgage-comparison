@@ -17,7 +17,7 @@ Resources:
       Handler: backend/server.handler
       Runtime: python3.12
       Timeout: 300
-      MemorySize: 1024
+      MemorySize: 256
       Layers:
         - !Ref MortgageSimulatorLayer
       Environment:
