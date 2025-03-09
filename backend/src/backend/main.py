@@ -262,7 +262,7 @@ class MortgageSimulation:
         sum_capital_paid = sum(payment.capital_paid for payment in self.mortgage_payments)
         sum_bonification_paid = sum(payment.bonfication_payments for payment in self.mortgage_payments)
         sum_expenses = sum(self.yearly_house_expenses.values())*self.condition.totalYears
-        equivalent_fixed_interest_rate = self.calculate_equivalent_fixed_interest_rate(self.initial_principal, sum_interest_paid, self.condition.totalYears)
+        equivalent_fixed_interest_rate = self.calculate_equivalent_fixed_interest_rate(self.initial_principal, sum_interest_paid+sum_bonification_paid, self.condition.totalYears)
         
 
 
