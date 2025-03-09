@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
-from main import MortgageCondition, MortgageSimulation, summarize_mortgage_payments, MortgageStats, SummarizedMortgagePayment
+from backend.main import MortgageCondition, MortgageSimulation, summarize_mortgage_payments, MortgageStats, SummarizedMortgagePayment
 import uvicorn
 import logging
 from mangum import Mangum
