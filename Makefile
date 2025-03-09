@@ -15,7 +15,7 @@ help:
 	@echo "  delete      : Remove stack"
 
 build:
-	cd backend && poetry install && poetry build-lambda
+	cd backend && poetry install && poetry build-lambda docker-image=public.ecr.aws/sam/build-python3.12:latest-x86_64
 	sam build -t $(TEMPLATE_PATH)
 
 deploy: build	
