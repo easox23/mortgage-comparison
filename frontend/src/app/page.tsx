@@ -34,12 +34,8 @@ interface SimulationResults {
   };
 }
 
-interface NumberFormatChangeEvent extends React.ChangeEvent<HTMLInputElement> {
-  detail: {
-    numberValue: number;
-  };
-}
 
+const API_URL = 'https://8tx3zsb2b5.execute-api.eu-west-1.amazonaws.com/v1/api/simulate';
 
 export default function MortgageSimulator() {
   const [conditions, setConditions] = useState<Condition[]>([])
@@ -86,7 +82,8 @@ export default function MortgageSimulator() {
   const handleSimulate = async () => {
     setIsSimulating(true)
     try {
-      const response = await fetch('http://localhost:8000/api/simulate', {
+      
+      const response = await fetch(API_URL, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -116,6 +113,11 @@ export default function MortgageSimulator() {
         Mortgage
         <span className={styles.highlight}> Simulator</span>
       </h1>
+
+      <p className={styles.description}>
+        Easily compare mortgage offers with more advanced inputs.
+        Visualize how different terms, rates, and bonifications impact your financial future. Our simulation runs 100 scenarios, considering Euribor as a random variable, to provide a comprehensive range of possible outcomes with clear box plots.
+      </p>
 
       <div className={styles.card}>
         <div className={styles.mainInputs}>
