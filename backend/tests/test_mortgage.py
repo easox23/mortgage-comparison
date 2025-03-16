@@ -1,5 +1,5 @@
 import pytest
-from src.main import MortgageSimulation, MortgagePayment, MortgageCondition
+from src.backend.main import MortgageSimulation, MortgagePayment, MortgageCondition
 
 @pytest.fixture
 def sample_conditions():
@@ -18,7 +18,7 @@ def test_mortgage_simulation_init(sample_conditions):
     current_euribor = 0.01
     yearly_variance = 0.0003
     
-    sim = MortgageSimulation(principal, sample_conditions, "test", current_euribor, yearly_variance)
+    sim = MortgageSimulation(principal,{"yearly_house_expenses": 5000}, sample_conditions, "test", current_euribor, yearly_variance)
     
     assert sim.initial_principal == principal
     assert sim.year == 0
@@ -28,7 +28,7 @@ def test_mortgage_simulation_init(sample_conditions):
     assert sim.condition == sample_conditions
 
 def test_calculate_new_euribor(sample_conditions):
-    sim = MortgageSimulation(300000, sample_conditions, "test", 0.01, 0.0003)
+    sim = MortgageSimulation(300000,{"yearly_house_expenses": 5000}, sample_conditions, "test", 0.01, 0.0003)
     old_euribor = 0.01
     
     # Test multiple times since it's random
@@ -38,7 +38,7 @@ def test_calculate_new_euribor(sample_conditions):
         assert abs(new_euribor - old_euribor) < 0.01
 
 def test_simulate_yearly_mortgage_payment(sample_conditions):
-    sim = MortgageSimulation(300000, sample_conditions, "test", 0.01, 0.0003)
+    sim = MortgageSimulation(300000,{"yearly_house_expenses": 5000}, sample_conditions, "test", 0.01, 0.0003)
     
     # Test first year (fixed period)
     sim.simulate_yearly_mortgage_payment()
@@ -59,19 +59,17 @@ def test_simulate_yearly_mortgage_payment(sample_conditions):
     assert payment.interest_rate != sample_conditions.rate
 
 def test_calculate_yearly_loan_payment(sample_conditions):
-    sim = MortgageSimulation(300000, sample_conditions, "test", 0.01, 0.0003)
+    sim = MortgageSimulation(300000,{"yearly_house_expenses": 5000}, sample_conditions, "test", 0.01, 0.0003)
     
     result = sim.calculate_yearly_loan_payment(300000, 0.02, 1, 30)
     assert 'capital_paid' in result
     assert result['capital_paid'] > 0
 
 def test_full_simulation(sample_conditions):
-    sim = MortgageSimulation(300000, sample_conditions, "test", 0.01, 0.0003)
+    sim = MortgageSimulation(300000,{"yearly_house_expenses": 5000}, sample_conditions, "test", 0.01, 0.0003)
     results = sim.simulate()
     
-    assert 'total_paid' in results
-    assert 'total_years' in results
-    assert results['total_years'] == sample_conditions.totalYears
+    assert results.total_years == sample_conditions.totalYears
     assert len(sim.mortgage_payments) == sample_conditions.totalYears + 1
 
 def test_mortgage_simulation():
