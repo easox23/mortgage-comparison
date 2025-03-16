@@ -25,3 +25,5 @@ build-backend = "poetry.core.masonry.api"
 layer-artifact-path = "artifacts/layer.zip"
 layer-install-dir = "python"
 function-artifact-path = "artifacts/function.zip"
+[tool.poetry.group.dev.dependencies]
+pre-commit = "^4.1.0"
