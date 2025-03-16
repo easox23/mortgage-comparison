@@ -109,3 +109,4 @@ backend/package.zip
 
 # aws
 .aws-sam/
+infra/samconfig.toml
