@@ -1,5 +1,9 @@
 # Mortgage Comparison Tool
 
+You can find a live version of the tool here:
+https://mortgage.ealejo.dev/
+
+
 A comprehensive web application for comparing different mortgage options and simulating payment scenarios over time. This tool helps users make informed decisions about mortgage choices by visualizing payment schedules, interest rates, and total costs.
 
 ## Features
@@ -77,7 +81,11 @@ After cloning this repository, you will need to create or configure the followin
 
 ## Local Development
 
-### Backend Setup
+This section outlines the complete local development workflow, from initial setup to testing and iterating on changes.
+
+### Initial Setup
+
+#### Backend Setup
 
 1. Install Python dependencies:
    ```bash
@@ -85,17 +93,13 @@ After cloning this repository, you will need to create or configure the followin
    poetry install
    ```
 
-2. Run tests:
+2. Start the FastAPI backend server:
    ```bash
-   poetry run pytest
+   poetry run server.py
    ```
 
-3. Build Lambda artifacts:
-   ```bash
-   poetry build-lambda
-   ```
 
-### Frontend Setup
+#### Frontend Setup
 
 1. Install Node.js dependencies:
    ```bash
@@ -103,14 +107,20 @@ After cloning this repository, you will need to create or configure the followin
    npm install
    ```
 
-2. Set up environment variables (copy `.env.example` to `.env` if it exists)
+2. Configure the local environment:
+   Create a `.env` file in the frontend directory with:
+   ```
+   NEXT_PUBLIC_API_URL=http://localhost:8000
+   ```
 
-3. Start the development server:
+3. In a separate terminal window, start the Next.js development server:
    ```bash
+   cd frontend
    npm run dev
    ```
 
-4. Access the application at `http://localhost:3000`
+4. Access the application at http://localhost:3000
+
 
 ## Deployment
 
@@ -157,3 +167,10 @@ make delete
   - S3 buckets
   - CloudFront distribution
   - Necessary IAM roles and permissions
+
+
+## Known issues
+
+- Logging is not properly working in the Lambda functions.
+- No unit tests for the frontend.
+- No CI/CD pipeline. However this should be easy to implement with Make.
