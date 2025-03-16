@@ -1,5 +1,5 @@
 import dynamic from "next/dynamic";
-const Plot = dynamic(() => import("react-plotly.js"), { ssr: false, })
+const Plot = dynamic(() => import("react-plotly.js").then(mod => mod.default), { ssr: false })
 import { useState } from "react";
 import { BoxPlotData } from 'plotly.js';
 import styles from '../app/page.module.css';
