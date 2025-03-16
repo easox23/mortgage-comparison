@@ -81,8 +81,7 @@ export const AverageResultsVisualizer = ({ average_results }: AverageResultsVisu
           layout={{
             title: `${selectedField.replace(/_/g, ' ').toUpperCase()} Distribution by Condition`,
             yaxis: { title: 'Value' },
-            showlegend: true,
-            boxmode: 'group'
+            showlegend: true
           }}
           style={{ width: '100%', height: '600px' }}
         />

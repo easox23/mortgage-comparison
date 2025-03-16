@@ -1,48 +1,54 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from "react";
 
-interface PercentageInputProps {
-  initialValue?: number;
-  onChange?: (value: number) => void;
-  max?: number;
-}
+const PercentageInput = () => {
+  const [percentage, setPercentage] = useState("");
+  const [error, setError] = useState("");
 
-const PercentageInput: React.FC<PercentageInputProps> = ({ initialValue = 0, onChange, max = 100 }) => {
-  const [value, setValue] = useState(initialValue);
-
-  const formatPercentage = (number: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'percent',
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    }).format(number / 100);
-  };
-
+  // Function to handle input change
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    let inputValue = e.target.value.replace(/[^0-9.]/g, '');
-    let numericValue = parseFloat(inputValue);
+    const inputValue = e.target.value;
 
-    // Ensure the value doesn't exceed the max
-    numericValue = Math.min(numericValue, max);
+    // If the input is empty, set the percentage to empty string
+    if (inputValue === "") {
+      setPercentage("");
+      setError(""); // Clear error if input is empty
+      return;
+    }
 
-    setValue(numericValue);
-    if (onChange) {
-      onChange(numericValue);
+    // Remove non-numeric characters except for the percentage sign
+    let sanitizedValue = inputValue.replace(/[^0-9%]/g, "");
+
+    // Ensure it has a percentage sign at the end if there's a number entered
+    if (sanitizedValue && !sanitizedValue.includes('%')) {
+      sanitizedValue = sanitizedValue + '%';
+    }
+
+    // Remove the percentage sign for numeric validation
+    let numericValue = sanitizedValue.replace('%', '');
+    const numericValueParsed = parseFloat(numericValue);
+
+    // Validate the number is within the range 0-100
+    if (numericValueParsed >= 0 && numericValueParsed <= 100 && !isNaN(numericValueParsed)) {
+      setPercentage(sanitizedValue);
+      setError(""); // Clear error if valid
+    } else {
+      setError("Please enter a valid percentage between 0 and 100.");
     }
   };
 
-  useEffect(() => {
-    setValue(initialValue);
-  }, [initialValue]);
-
   return (
-    <input
-      type="text"
-      value={formatPercentage(value)}
-      onChange={handleChange}
-      onFocus={(e) => e.target.select()}
-      className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500 transition-colors"
-    />
+    <div>
+      <label htmlFor="percentage-input">Enter Percentage: </label>
+      <input
+        id="percentage-input"
+        type="text"
+        value={percentage || "Enter percentage"}
+        onChange={handleChange}
+        placeholder="Enter percentage"
+      />
+      {error && <div style={{ color: "red" }}>{error}</div>}
+    </div>
   );
 };
 
-export default PercentageInput; 
+export default PercentageInput;

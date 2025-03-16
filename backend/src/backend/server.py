@@ -5,16 +5,17 @@ from backend.main import MortgageCondition, MortgageSimulation, summarize_mortga
 import uvicorn
 import logging
 from mangum import Mangum
+import os
 
 app = FastAPI()
 
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=os.getenv("LOGGING_LEVEL", logging.INFO))
 logger = logging.getLogger(__name__)
 
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=[f'https://{os.getenv("FRONTEND_URL", "*")}'],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -38,7 +39,7 @@ class SimulationOutput(BaseModel):
 #default route
 @app.get("/")
 async def root():
-    return {"message": "Hello World"}
+    return {"message": "Mortgage Simulator API"}
 
 @app.post("/api/simulate")
 async def simulate(simulation_input: SimulationInput) -> SimulationOutput:

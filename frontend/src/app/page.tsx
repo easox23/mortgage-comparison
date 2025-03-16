@@ -3,6 +3,9 @@ import { useState } from 'react'
 import styles from './page.module.css'
 import { AverageResultsVisualizer } from '../components/AverageResultsVisualizer';
 import CurrencyInput from 'react-currency-input-field';
+import 'dotenv/config'
+
+
 interface Condition {
   name: string;
   rate: number;
@@ -34,9 +37,8 @@ interface SimulationResults {
   };
 }
 
-
-const API_URL = 'https://8tx3zsb2b5.execute-api.eu-west-1.amazonaws.com/v1/api/simulate';
-
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/v1/api/simulate'
+console.log(API_URL)
 export default function MortgageSimulator() {
   const [conditions, setConditions] = useState<Condition[]>([])
   const [isSimulating, setIsSimulating] = useState(false)
@@ -54,7 +56,7 @@ export default function MortgageSimulator() {
   const [showDescriptions, setShowDescriptions] = useState(false)
 
   const handleConditionChange = (index: number, field: keyof Condition, value: any) => {
-    
+   
     setConditions(prev => {
       const newConditions = [...prev]
       newConditions[index] = { ...newConditions[index], [field]: value }
@@ -264,7 +266,7 @@ export default function MortgageSimulator() {
                       id="rate"
                       value={condition.rate*100}
                       onChange={(e) => handleConditionChange(index, 'rate', parseFloat(e.target.value)/100)}
-                      step="0.1"
+                      step="0.01"
                       min="0"
                       max="100"
                       className={styles.input}
