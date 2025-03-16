@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "dotenv": "^16.4.7",
     "next": "15.2.0",
     "react": "^19.0.0",
     "react-currency-input-field": "^3.10.0",

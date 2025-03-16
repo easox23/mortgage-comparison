@@ -1,12 +1,31 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
-Description: 'Mortgage Simulator - Infrastructure with CloudFront OAC'
+Description: 'Mortgage Simulator - Infrastructure'
 
 Parameters:
   StageName:
     Type: String
     Default: v1
     Description: API Gateway stage name
+    
+  CertificateArn:
+    Type: String
+    Description: ARN of the ACM certificate (must be in us-east-1 region for CloudFront)
+    
+  DomainName:
+    Type: String
+    Description: Primary domain name for the CloudFront distribution
+    
+  LoggingLevel:
+    Type: String
+    Default: INFO
+    AllowedValues: 
+      - DEBUG
+      - INFO
+      - WARNING
+      - ERROR
+      - CRITICAL
+    Description: Logging level for the Lambda function
 
 Resources:
   # Lambda Function
@@ -17,12 +36,14 @@ Resources:
       Handler: backend/server.handler
       Runtime: python3.12
       Timeout: 300
-      MemorySize: 256
+      MemorySize: 512
       Layers:
         - !Ref MortgageSimulatorLayer
       Environment:
         Variables:
           STAGE: !Ref StageName
+          LOGGING_LEVEL: !Ref LoggingLevel
+          FRONTEND_URL: !Ref DomainName
       Events:
         AllApiEvents:
           Type: Api
@@ -55,7 +76,7 @@ Resources:
       Cors:
         AllowMethods: "'GET,POST,OPTIONS'"
         AllowHeaders: "'Content-Type,Authorization'"
-        AllowOrigin: "'*'"
+        AllowOrigin: !Sub "'https://${DomainName}'"
       EndpointConfiguration: REGIONAL
 
   # S3 Bucket (Private)
@@ -89,6 +110,8 @@ Resources:
       DistributionConfig:
         Enabled: true
         DefaultRootObject: index.html
+        Aliases:
+          - !Ref DomainName
         Origins:
           - Id: S3Origin
             DomainName: !Sub "${WebsiteBucket}.s3.${AWS::Region}.amazonaws.com"
@@ -111,7 +134,9 @@ Resources:
             Cookies:
               Forward: none
         ViewerCertificate:
-          CloudFrontDefaultCertificate: true
+          AcmCertificateArn: !Ref CertificateArn
+          SslSupportMethod: sni-only
+          MinimumProtocolVersion: TLSv1.2_2021
 
   # S3 Bucket Policy for CloudFront OAC
   WebsiteBucketPolicy:
@@ -139,6 +164,10 @@ Outputs:
   CloudFrontDomain:
     Description: "CloudFront distribution domain name"
     Value: !GetAtt CloudFrontDistribution.DomainName
+
+  CloudFrontDistributionId:
+    Description: "CloudFront distribution ID"
+    Value: !Ref CloudFrontDistribution
 
   S3BucketName:
     Description: "Name of the S3 bucket"

@@ -5,5 +5,5 @@ resolve_s3 = true
 s3_prefix = "mortgage-simulator"
 region = "eu-west-1"
 capabilities = "CAPABILITY_IAM"
-parameter_overrides = "StageName=\"v1\""
+parameter_overrides = "DomainName=\"mortgage.ealejo.dev\", CertificateArn=\"arn:aws:acm:us-east-1:778352773003:certificate/18f3fe26-db77-447c-b0ee-edab6514502e\""
 image_repositories = []
