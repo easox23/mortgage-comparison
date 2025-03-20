@@ -72,8 +72,8 @@ export default function MortgageSimulator() {
       fixedPeriod: 5,
       euriborDelta: 0.01,
       totalYears: 10,
-      fixedPeriodBonification: 1000,
-      afterFixedPeriodBonification: 500
+      fixedPeriodBonification: 0,
+      afterFixedPeriodBonification: 0
     }])
   }
 
